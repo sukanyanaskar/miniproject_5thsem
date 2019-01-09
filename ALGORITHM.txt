@@ -1,0 +1,38 @@
+Algorithm for speed measurment..
+
+1. initialize
+     time_for_speed=0,velocity=0; //float type 
+     callibrate=0;                                //double type
+    active=0;                                       // boolean type
+
+2. void setup( )// set input and output mode for different pins
+
+          serial.begin(9600) // 9600 bits information passing in a second
+          pinMode(8,input)// pin no. 8 is used as input pin
+          pinMode(9,input)//pin no. 8  is used as input pin
+          pinMode(13,output)//pin no. 13 is used as output pin
+
+3. loop( )// main part of programming
+       callibrate=millis( ) //  function returns the time elapsed when program starts
+       
+       if(digitRead(8) == 1) // chek when pin no. 8 is High
+              while(digitRead(9) != 1)
+              {
+                   time_for_spped=millis-callibrate;  // Time required to object b/w both sensor
+                   velocity=756/(time_for_speed);     //   speed of object in km/h
+                   active=1                                                //  assign active to 1
+              }
+        if(active == 1)
+        {
+              serial.print(velocity);                          //  print the velocity of object
+             active=0;                                                   //  assign active again zero
+      
+              if( velocity > 1)                                                // if velocity excced 1 km/h
+              {
+                  digitWrite(13,HIGH);                         //Led goes to high set on pin no. 13
+                  delay(2000);                                          // led wait in prev state for two second
+                  digitRead(13,LOW);                           // Led goes to off
+              }
+       }
+   
+        

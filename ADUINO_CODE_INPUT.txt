@@ -1,0 +1,62 @@
+/* Objective: Program to detect speed using IR sensor
+ * Date: 08 december 2018
+ */
+
+double calibrate=0;
+float time_for_speed=0, velocity=0 ; 
+boolean active=0;
+
+void setup()
+{ 
+  Serial.begin(9600);
+  pinMode(8, INPUT);
+  pinMode(9, INPUT);
+}
+
+
+void loop()
+{
+  calibrate= millis();
+  
+   
+    if( digitalRead(8)==1)
+    {
+        while(digitalRead(9)!=1);
+        time_for_speed= millis()- calibrate;
+        while(digitalRead(9)!=0);
+        velocity= 360/time_for_speed;   // check note 1 comments below to see how 216 came here
+        active=1;                       // check note 2 comments below to understand the use of this variable
+    }
+
+    if(active==1)
+    {
+      Serial.print("speed ");
+      Serial.print(velocity);
+      Serial.println(" km/h");
+      delay(2000);
+      active=0;
+    }        
+
+}
+
+// Note 1
+
+/* distance between two ir sensors 10cm= 0.01m (1m= 100cm)
+ * since time is in millisecond. So to change it to m per second we will have to multiply the whole thing with 1000
+ * (0.10/time_for_speed)*1000
+ * Now this speed is m/s which we will convert in km/h and for that multiply it by 18/5 or 3.6 (both are same)
+ * ((0.10/time_for_speed)*1000)*18/5
+ * after solving it, we will get 216/time_for_speed ....................... finish
+ * If you placing two ir at 5cm apart then you would choose 0.05 instead of 0.06 
+ * Do the same for other distance between two ir sensors
+ * 
+ */
+
+
+
+// Note 2
+
+/* Variable active is used so that detected speed would be print on the screen only for one time because printing the same detected speed is illogical 
+ * active becomes 1 whilte calucation of speed or velocity but once printed on screen it goes to low which makes the execution of printing commands to execute
+ * only one time for one detection
+ */
